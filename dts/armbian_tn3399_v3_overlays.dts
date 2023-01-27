@@ -23,47 +23,14 @@
 			leds {
 				compatible = "gpio-leds";
 				pinctrl-names = "default";
-				pinctrl-0 = <&user_led1_pin>, <&user_led2_pin>,
-						<&user_led3_pin>, <&user_led4_pin>,
-						<&wlan_led_pin>, <&bt_led_pin>;
+				pinctrl-0 = <&user_led1_pin>;
 
 				user_led1: led-1 {
 					label = "sys_led";
+					function = "status";
+					color = <2>;
 					gpios = <&gpio1 0x12 0>;
 					linux,default-trigger = "heartbeat";
-				};
-
-				user_led2: led-2 {
-					label = "green:user2";
-					gpios = <&gpio4 0x16 0>;
-					linux,default-trigger = "mmc0";
-				};
-
-				user_led3: led-3 {
-					label = "green:user3";
-					gpios = <&gpio4 0x18 0>;
-					linux,default-trigger = "mmc1";
-				};
-
-				user_led4: led-4 {
-					label = "green:user4";
-					gpios = <&gpio4 0x1c 0>;
-					panic-indicator;
-					linux,default-trigger = "none";
-				};
-
-				wlan_active_led: led-5 {
-					label = "yellow:wlan";
-					gpios = <&gpio4 0x1d 0>;
-					linux,default-trigger = "phy0tx";
-					default-state = "off";
-				};
-
-				bt_active_led: led-6 {
-					label = "blue:bt";
-					gpios = <&gpio4 0x1e 0>;
-					linux,default-trigger = "hci0-power";
-					default-state = "off";
 				};
 			};
 			
@@ -143,31 +110,6 @@
 					rockchip,pins =
 						<4 0x12 0x00 &pcfg_pull_none>;
 				};
-
-				user_led2_pin: user-led2-pin {
-					rockchip,pins =
-						<4 0x16 0x00 &pcfg_pull_none>;
-				};
-
-				user_led3_pin: user-led3-pin {
-					rockchip,pins =
-						<4 0x18 0x00 &pcfg_pull_none>;
-				};
-
-				user_led4_pin: user-led4-pin {
-					rockchip,pins =
-						<4 0x1c 0x00 &pcfg_pull_none>;
-				};
-
-				wlan_led_pin: wlan-led-pin {
-					rockchip,pins =
-						<4 0x1d 0x00 &pcfg_pull_none>;
-				};
-
-				bt_led_pin: bt-led-pin {
-					rockchip,pins =
-						<4 0x1e 0x00 &pcfg_pull_none>;
-				};
 			};
 
 			pcie {
@@ -229,6 +171,17 @@
 				clock-names = "mclk";
 				status = "okay";
 				#sound-dai-cells = <0x00>;
+			};
+		};
+	};
+
+	fragment@10 {
+		target-path = "/i2c@ff120000";
+		__overlay__ {
+			status = "okay";
+			rtc@51 {
+				compatible = "haoyu,hym8563";
+				reg = < 0x51 >;
 			};
 		};
 	};
