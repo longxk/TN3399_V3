@@ -1,0 +1,235 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "radxa,rockpi4b", "radxa,rockpi4", "rockchip,rk3399";
+	
+	fragment@0 {
+		target-path = "/";
+		__overlay__ {
+			model = "TN3399 V3 Dev Board";
+			
+			chosen {
+				stdout-path = "serial2:1500000n8";
+			};
+
+			clkin_gmac: external-gmac-clock {
+				compatible = "fixed-clock";
+				clock-frequency = <125000000>;
+				clock-output-names = "clkin_gmac";
+				#clock-cells = <0>;
+			};
+
+			leds {
+				compatible = "gpio-leds";
+				pinctrl-names = "default";
+				pinctrl-0 = <&user_led1_pin>, <&user_led2_pin>,
+						<&user_led3_pin>, <&user_led4_pin>,
+						<&wlan_led_pin>, <&bt_led_pin>;
+
+				user_led1: led-1 {
+					label = "sys_led";
+					gpios = <&gpio1 0x12 0>;
+					linux,default-trigger = "heartbeat";
+				};
+
+				user_led2: led-2 {
+					label = "green:user2";
+					gpios = <&gpio4 0x16 0>;
+					linux,default-trigger = "mmc0";
+				};
+
+				user_led3: led-3 {
+					label = "green:user3";
+					gpios = <&gpio4 0x18 0>;
+					linux,default-trigger = "mmc1";
+				};
+
+				user_led4: led-4 {
+					label = "green:user4";
+					gpios = <&gpio4 0x1c 0>;
+					panic-indicator;
+					linux,default-trigger = "none";
+				};
+
+				wlan_active_led: led-5 {
+					label = "yellow:wlan";
+					gpios = <&gpio4 0x1d 0>;
+					linux,default-trigger = "phy0tx";
+					default-state = "off";
+				};
+
+				bt_active_led: led-6 {
+					label = "blue:bt";
+					gpios = <&gpio4 0x1e 0>;
+					linux,default-trigger = "hci0-power";
+					default-state = "off";
+				};
+			};
+			
+			rt5640_card: rt5640-sound {
+				status = "okay";
+				compatible = "simple-audio-card";
+				simple-audio-card,format = "i2s";
+				simple-audio-card,name = "rockchip,rt5640-codec";
+				simple-audio-card,mclk-fs = <0x100>;
+				simple-audio-card,widgets = "Microphone", "Mic Jack", "Headphone", "Headphone Jack";
+				simple-audio-card,routing = "Mic Jack", "MICBIAS1", "IN1P", "Mic Jack", "Headphone Jack", "HPOL", "Headphone Jack", "HPOR";
+
+				simple-audio-card,cpu {
+					sound-dai = <&i2s1>;
+				};
+
+				simple-audio-card,codec {
+					sound-dai = <&es8316>;
+				};
+			};
+		};
+	};
+	
+	/*
+	 * This fragment is needed only for the internal pull-up activation,
+	 * external pull-up resistor is highly recommended if using long wires
+	 */
+	fragment@1 {
+		target-path = "/pcie@f8000000";
+		__overlay__ {
+			max-link-speed = <0x01>;
+			ep-gpios = <&gpio2 0x02 0x00>;
+		};
+	};
+	
+	fragment@2 {
+		target-path = "/mmc@fe310000/wifi@1";
+		__overlay__ {
+			compatible = "brcm,bcm43455-fmac";
+		};
+	};
+	
+	fragment@3 {
+		target-path = "/usb@fe800000/usb@fe800000";
+		__overlay__ {
+			dr_mode = "peripheral";
+		};
+	};
+	
+	fragment@4 {
+		target-path = "/serial@ff180000";
+		__overlay__ {
+			bluetooth {
+				compatible = "brcm,bcm4345c5";
+				max-speed = <0x16e360>;
+				device-wakeup-gpios = <&gpio2 0x1b 0x00>;
+				clocks = <0x44 0x01>;
+				clock-names = "ext_clock";
+				host-wakeup-gpios = <&gpio0 0x04 0x00>;
+				shutdown-gpios = <&gpio0 0x09 0x00>;
+			};
+		};
+	};
+	
+	fragment@5 {
+		target-path = "/pinctrl";
+		__overlay__ {
+			gmac {
+				rgmii_sleep_pins: rgmii-sleep-pins {
+					rockchip,pins =
+						<1 0x0a 0x00 &pcfg_output_low>;
+				};
+			};
+
+			leds {
+				user_led1_pin: user-led1-pin {
+					rockchip,pins =
+						<4 0x12 0x00 &pcfg_pull_none>;
+				};
+
+				user_led2_pin: user-led2-pin {
+					rockchip,pins =
+						<4 0x16 0x00 &pcfg_pull_none>;
+				};
+
+				user_led3_pin: user-led3-pin {
+					rockchip,pins =
+						<4 0x18 0x00 &pcfg_pull_none>;
+				};
+
+				user_led4_pin: user-led4-pin {
+					rockchip,pins =
+						<4 0x1c 0x00 &pcfg_pull_none>;
+				};
+
+				wlan_led_pin: wlan-led-pin {
+					rockchip,pins =
+						<4 0x1d 0x00 &pcfg_pull_none>;
+				};
+
+				bt_led_pin: bt-led-pin {
+					rockchip,pins =
+						<4 0x1e 0x00 &pcfg_pull_none>;
+				};
+			};
+
+			pcie {
+				pcie_drv: pcie-drv {
+					rockchip,pins =
+						<2 0x05 0x00 &pcfg_pull_none>;
+					};
+			};
+
+			usb2 {
+				host_vbus_drv: host-vbus-drv {
+					rockchip,pins =
+						<4 0x19 0x00 &pcfg_pull_none>;
+				};
+			};
+		};
+	};
+	
+	fragment@6 {
+		target-path = "/vcc3v3-pcie-regulator";
+		__overlay__ {
+			gpio = <&gpio2 5 0x00>;
+		};
+	};
+	
+	fragment@7 {
+		target-path = "/vcc5v0-host-regulator";
+		__overlay__ {
+			gpio = <&gpio4 25 0x00>;
+		};
+	};
+	
+	fragment@8 {
+		target-path = "/ethernet@fe300000";
+		__overlay__ {
+			assigned-clocks = <&cru 0xa6>;
+			assigned-clock-parents = <&clkin_gmac>;
+			clock_in_out = "input";
+			phy-supply = <&vcc3v3_sys>;
+			phy-mode = "rgmii";
+			pinctrl-names = "default";
+			pinctrl-0 = <&rgmii_pins>;
+			snps,reset-gpio = <&gpio3 0x0f 0x01>;
+			snps,reset-active-low;
+			snps,reset-delays-us = <0 10000 50000>;
+			tx_delay = <0x28>;
+			rx_delay = <0x11>;
+			status = "okay";
+		};
+	};
+	
+	fragment@9 {
+		target-path = "/i2c@ff110000";
+		__overlay__ {
+			codec@11 {
+				compatible = "realtek,rt5640";
+				reg = <0x1c>;
+				clocks = <&cru 0x59>;
+				clock-names = "mclk";
+				status = "okay";
+				#sound-dai-cells = <0x00>;
+			};
+		};
+	};
+};

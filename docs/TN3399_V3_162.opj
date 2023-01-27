@@ -1,0 +1,36 @@
+(ExpressProject ""
+  (ProjectVersion "19981106")
+  (ProjectType "PCB")
+  (Folder "Design Resources"
+    (Folder "Library")
+    (File ".\tn3399_v3_162.dsn"
+      (Type "Schematic Design"))
+    (BuildFileAddedOrDeleted "x")
+    (CompileFileAddedOrDeleted "x")
+    (NoModify))
+  (Folder "Outputs")
+  (Folder "Referenced Projects")
+  (PartMRUSelector)
+  (GlobalState
+    (FileView
+      (Path "Design Resources")
+      (Path "Design Resources" ".\tn3399_v3_162.dsn")
+      (Path "Design Resources" ".\tn3399_v3_162.dsn" "RK3399_VR&tablet Ref")
+      (Select "Design Resources" ".\tn3399_v3_162.dsn" "RK3399_VR&tablet Ref"
+         "SHEET13-MIPI TO LVDS"))
+    (HierarchyView)
+    (Doc
+      (Type "COrCapturePMDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 0 522 0 715"))
+      (Tab 0))
+    (Doc
+      (Type "COrSchematicDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 323 1956 127 637")
+        (Scroll "0 130")
+        (Zoom "100")
+        (Occurrence "/"))
+      (Path "D:\RK\TN3399\TN3399_V3×ÊÁÏ\TN3399_V3_162.DSN")
+      (Schematic "RK3399_VR&tablet Ref")
+      (Page "SHEET13-MIPI TO LVDS"))))
